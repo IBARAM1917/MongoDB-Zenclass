@@ -1,0 +1,79 @@
+use guvizen_class
+switched to db guvizen_class
+
+Create Collection and Insert Data-Users:
+db.users.insertMany([
+  {userid:1,name:"Abi",email:'abi@gmail.com'},
+  {userid:2,name:'Ram',email:'ram@gamil.com'},
+  {userid:3,name:'mani',email:'mani@gmail.com'},
+  {userid:4,name:'ovi',email:'ovi@gmail.com'},
+  {userid:5,name:'deepa',email:'deepa@gmail.com'}
+]);
+
+Create Collection and Insert Data-Codekata:
+db.createCollection('codekata');
+{ ok: 1 }
+db.codekata.insertMany([
+  {userid:1,problems:60},
+  {userid:2,problems:100},
+  {userid:3,problems:67},
+  {userid:4,problems:78},
+  {userid:5,problems:65}
+]);
+
+Create Collection and Insert Data-Attendance:
+db.createCollection('attendance');
+{ ok: 1 }
+db.attendance.insertMany([
+  {userid:1,topicid:2,attended:true},
+  {userid:2,topicid:1,attended:true},
+  {userid:3,topicid:5,attended:true},
+  {userid:4,topicid:3,attended:false},
+  {userid:5,topicid:4,attended:false}
+]);
+
+Create Collection and Insert Data-Topics:
+db.createCollection('topics');
+{ ok: 1 }
+db.topics.insertMany([
+  {topicid:1,topic:'HTML',topic_date:new Date("18-Oct-2020")},
+  {topicid:2,topic:'CSS',topic_date:new Date("28-Oct-2020")},
+  {topicid:3,topic:'JavaScript',topic_date:new Date("05-Nov-2020")},
+  {topicid:4,topic:'ReactJS',topic_date:new Date('15-Nov-2020')},
+  {topicid:5,topic:'NodeJS',topic_date:new Date('25-Nov-2020')}
+]);
+
+Create Collection and Insert Data-Tasks:
+db.createCollection('tasks');
+{ ok: 1 }
+db.tasks.insertMany([
+  {taskid:1,topicid:1,userid:1,task:'HTML Task',due_date:new Date('18-Oct-2020'),submitted:true},
+  {taskid:2,topicid:2,userid:2,task:'CSS Task',due_date:new Date('28-Oct-2020'),submitted:false},
+  {taskid:3,topicid:3,userid:3,task:'JavaScript Task',due_date:new Date('05-Nov-2020'),submitted:true},
+  {taskid:4,topicid:4,userid:4,task:'React Task',due_date:new Date('15-Nov-2020'),submitted:true},
+  {taskid:5,topicid:5,userid:5,task:'NodeJS Task',due_date:new Date('25-Nov-2020'),submitted:false}
+]);
+
+Create Collection and Insert Data-Companydrives:
+db.createCollection('companydrives');
+{ ok: 1 }
+db.companydrives.insertMany([
+  {userid:1,drive_date:new Date('20-Oct-2020'),company:'Apple'},
+  {userid:2,drive_date:new Date('22-Oct-2020'),company:'Amazon'},
+  {userid:3,drive_date:new Date('25-Oct-2020'),company:'TCS'},
+  {userid:4,drive_date:new Date('30-Oct-2020'),company:'Flipkart'},
+  {userid:5,drive_date:new Date('05-Nov-2020'),company:'Zomato'}
+]);
+
+
+Create Collection and Insert Data-Mentors:
+db.createCollection('mentors');
+{ ok: 1 }
+db.mentors.insertMany([
+  {mentorid:1,mentorname:'Rupan',mentor_email:'rupan@gmail.com',mentee_count:20},
+  {mentorid:2,mentorname:'Babu',mentor_email:'babu@gmail.com',mentee_count:18},
+  {mentorid:3,mentorname:'Raki',mentor_email:'raki@gmail.com',mentee_count:34},
+  {mentorid:4,mentorname:'Ravi',mentor_email:'ravi@gmail.com',mentee_count:25},
+  {mentorid:5,mentorname:'Kumar',mentor_email:'kumar@gmail.com',mentee_count:15}
+
+]);

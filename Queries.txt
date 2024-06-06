@@ -1,0 +1,200 @@
+1.Find all the topics and tasks which are thought in the month of October
+
+Ans:
+ db.topics.aggregate([
+  {
+$lookup:{
+from:'tasks',
+localField:'topicid',
+foreignField:'topicid',
+as:'taskinfo'
+}
+},
+  {
+$match:{
+$and:[
+  {topic_date:{$gte:new Date(2020-10-01),$lt:new Date('2020-11-01')}},
+  {
+$or:[
+  {'taskinfo.due_date':{$gte:new Date('2020-10-01'),$lt:new Date('2020-11-01')}},
+  {'taskinfo.due_date':{$exists:false}}
+]
+}
+]
+}
+},
+  {
+$project:{
+_id:0,
+topicid:1,
+topic:1,
+topic_date:1,
+tasks:'$taskinfo.task',
+due_dates:'$taskinfo.due_date'
+}
+}
+]);
+
+2.Find all the company drives which appeared between 15 oct-2020 and 31-oct-2020
+
+Ans:
+   db.companydrives
+guvizen_class.companydrives
+db.companydrives.find({
+$or:[
+  {drive_date:{$gte:new Date('15-oct-2020')}},
+  {drive_date:{$lte:new Date('31-oct-2020')}}
+]
+});
+
+3.Find all the company drives and students who are appeared for the placement.
+
+Ans:
+  db.companydrives.aggregate([
+  {
+$lookup:{
+from:'users',
+localField:'userid',
+foreignField:'userid',
+as:'userinfo'
+}
+},
+  {
+$project:{
+_id:0,
+company:1,
+drive_date:1,
+students:'$userinfo'
+}
+}
+]);
+
+4.Find the number of problems solved by the user in codekata
+Ans:
+
+db.codekata.aggregate([
+  {
+$lookup:{
+from:'users',
+localField:'userid',
+foreignField:'userid',
+as:'userinfo'
+}
+},
+  {
+$group:{
+_id:{
+userid:'$userid',
+username:'$userinfo.name'
+},
+total_problems_solved:{$sum:'$problems'}
+}
+},
+  {
+$project:{
+_id:0,
+userid:'$_id.userid',
+username:'$_id.username',
+total_problems_solved:1
+}
+}
+]);
+
+5.Find all the mentors with who has the mentee's count more than 15
+
+Ans:
+  db.users.aggregate([
+  {
+$group:{
+_id:'$mentorid',
+mentee_count:{$sum:1}
+}
+},
+  {
+$match:{mentee_count:{$gt:15}}
+},
+  {
+$lookup:{
+from:'mentors',
+localField:'_id',
+foreignField:'id',
+as:'mentor_details'
+}
+},
+  {
+$unwind:'$mentor_details'
+},
+  {
+$project:{
+_id:0,
+mentorid:'$_id',
+mentorname:'$mentor_details.mentorname',
+mentee_count:1
+}
+}
+
+]).pretty();
+
+6.Find the number of users who are absent and task is not submitted  between 15 oct-2020 and 31-oct-2020
+
+Ans:
+ const absentUsers = db.attendance.aggregate([
+  {
+    $match: {
+      date: { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") },
+      submitted: "true"
+    }
+  },
+  {
+    $group: {
+      _id: "$userid"
+    }
+  }
+]).toArray().map(user => user._id);
+
+const dueTasks = db.tasks.aggregate([
+  {
+    $match: {
+      due_date: { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") }
+    }
+  },
+  {
+    $group: {
+      _id: "$topicid"
+    }
+  }
+]).toArray().map(task => task._id);
+
+const usersWithDueTasks = db.tasks.aggregate([
+  {
+    $match: {
+      due_date: { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") }
+    }
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "topicid",
+      foreignField: "id",
+      as: "users"
+    }
+  },
+  {
+    $unwind: "$users"
+  },
+  {
+    $group: {
+      _id: "$users.id"
+    }
+  }
+]).toArray().map(user => user._id);
+
+const absentAndNotSubmitted = absentUsers.filter(user => usersWithDueTasks.includes(user));
+
+const usersDetails = db.users.find({ id: { $in: absentAndNotSubmitted } }, { name: 1, _id: 0 }).toArray();
+
+const userCount = usersDetails.length;
+
+print("Number of users who are absent and have not submitted tasks: ", userCount);
+print("Users who are absent and have not submitted tasks:");
+usersDetails.forEach(user => print(user.name));
